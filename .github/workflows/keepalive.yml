@@ -1,0 +1,27 @@
+name: 7-24 Discord Cloud KeepAlive
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: discord-keepalive-single
+  cancel-in-progress: false
+
+jobs:
+  keep-online:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        acc_idx: [0, 1, 2]
+    env:
+      VAULT_DATA: ${{ secrets.VAULT_DATA }}
+      VAULT_KEY: ${{ secrets.VAULT_KEY }}
+      GH_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 7/24 Izole Sunucu (Ayri IP & Sinirsiz Dakika) Aktif Tutucu
+        run: python3 cloud_runner.py ${{ matrix.acc_idx }}
